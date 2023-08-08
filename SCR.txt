@@ -1,11 +1,5 @@
 NXP Software Content Register
 
-Release Name:           IMX8MP IMX219 Sensor Enablement
-Date Created:           July-2023
-Package License:        LA_OPT_NXP_Software_License v48 July 2023 - Additional distribution license granted - Section 2.3 applies
-License File:           LICENSE.txt
-Description:            Enabled IMX219 Sensor on i.MX8MP EVK with ISP functions
-
 --------------------------------------------
 BSP Packages
 --------------------------------------------
@@ -37,10 +31,10 @@ Origin:                      VeriSilicon Holdings Co., Ltd. (GPL-2.0)
 
 --------------------------------------------
 
-Package:                     isp-imx-4.2.2.22.0.bin
+Package:                     isp-imx-4.2.2.20.0.bin
 Source Location:             Mirror
 Patch Location:              meta-imx8mp-isp-imx/recipes-isp-imx/sdk/isp-imx
-Outgoing License:            LA_OPT_NXP_Software_License v45 May 2023 - Additional distribution license granted - Section 2.3 applies 
+Outgoing License:            LA_OPT_NXP_Software_License v30 October 2021 - Additional distribution license granted - Section 2.3 applies 
 License File:                COPYING
 Package Category:            Graphics
 Type of Content:             binary and source

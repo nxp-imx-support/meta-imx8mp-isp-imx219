@@ -1,5 +1,5 @@
---- linux-imx/arch/arm64/boot/dts/freescale.orig/imx8mp-evk-imx219.dts	1970-01-01 08:00:00.000000000 +0800
-+++ linux-imx/arch/arm64/boot/dts/freescale/imx8mp-evk-imx219.dts	2022-11-30 17:04:13.000000000 +0800
+--- liunx-imx/arch/arm64/boot/dts/freescale.orig/imx8mp-evk-imx219.dts	1970-01-01 08:00:00.000000000 +0800
++++ liunx-imx/arch/arm64/boot/dts/freescale/imx8mp-evk-imx219.dts	2022-11-30 17:04:13.000000000 +0800
 @@ -0,0 +1,88 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
@@ -89,14 +89,13 @@
 +	status = "okay";
 +};
 +
---- linux-imx/arch/arm64/boot/dts/freescale/Makefile.orig	2023-07-06 16:22:49.414226942 +0800
-+++ linux-imx/arch/arm64/boot/dts/freescale/Makefile	2023-07-06 16:27:28.074321841 +0800
-@@ -120,7 +120,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
- 			  imx8mp-evk-dual-ov2775.dtb imx8mp-evk-spdif-lb.dtb imx8mp-evk-dsp.dtb \
- 			  imx8mp-evk-sof-wm8960.dtb \
+--- liunx-imx/arch/arm64/boot/dts/freescale/Makefile.bak	2023-03-01 13:26:39.526310931 +0800
++++ liunx-imx/arch/arm64/boot/dts/freescale/Makefile	2023-02-28 14:39:12.875490668 +0800
+@@ -109,6 +109,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+ 			  imx8mp-evk-basler-ov2775.dtb imx8mp-evk-dual-basler.dtb \
+ 			  imx8mp-evk-dual-ov2775.dtb imx8mp-evk-spdif-lb.dtb \
+ 			  imx8mp-evk-sof-wm8960.dtb imx8mp-evk-dsp.dtb \
++			  imx8mp-evk-imx219.dtb \
  			  imx8mp-evk-os08a20-ov5640.dtb imx8mp-evk-os08a20.dtb \
--			  imx8mp-evk-dual-os08a20.dtb \
-+			  imx8mp-evk-dual-os08a20.dtb imx8mp-evk-imx219.dtb\
+ 			  imx8mp-evk-dual-os08a20.dtb \
  			  imx8mp-evk-iqaudio-dacplus.dtb imx8mp-evk-iqaudio-dacpro.dtb imx8mp-evk-hifiberry-dacplus.dtb \
- 			  imx8mp-evk-hifiberry-dac2.dtb imx8mp-evk-hifiberry-dacplusadc.dtb \
- 			  imx8mp-evk-usdhc1-m2.dtb imx8mp-evk-rm67199.dtb \
