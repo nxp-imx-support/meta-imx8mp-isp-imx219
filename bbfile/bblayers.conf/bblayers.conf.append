@@ -1,0 +1,1 @@
+BBLAYERS += "${BSPDIR}/sources/meta-imx8mp-isp-imx219"

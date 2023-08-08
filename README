@@ -1,0 +1,17 @@
+This README file contains information on the contents of the meta-imx8mp-isp-imx219 layer.
+
+This layer enables IMX219 camera sensor ISP support on IMX8MP evk
+
+1. Compile i.MX8MP EVK board  with IMX219 enabled
+$ source sources/meta-imx8mp-isp-imx219/setup/setup-env-imx8mp-imx219 -b build-imx8mp-imx219
+$ bitbake imx-image-full
+
+2. Test
+a. plug imx219 sensor to the evk board MIPI CSI1
+b. Flash a Micro SD card with the image in build-imx8mp-imx219/tmp/deploy
+c. set uboot:
+> setenv fdtfile imx8mp-evk-imx219.dtb
+> saveenv
+> boot
+d. Test with gstreamer
+$ gst-launch-1.0 -v v4l2src device=/dev/video2 ! "video/x-raw,format=YUY2,width=1920,height=1080" ! queue ! waylandsink

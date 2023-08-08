@@ -1,0 +1,102 @@
+--- linux-imx/arch/arm64/boot/dts/freescale.orig/imx8mp-evk-imx219.dts	1970-01-01 08:00:00.000000000 +0800
++++ linux-imx/arch/arm64/boot/dts/freescale/imx8mp-evk-imx219.dts	2022-11-30 17:04:13.000000000 +0800
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2019-2020 NXP
++*/
++
++/dts-v1/;
++
++
++#include "imx8mp-evk.dts"
++
++/delete-node/ &ov5640_0;
++
++&i2c2 {
++
++
++	imx219: imx219@10 {
++		compatible = "sony,imx219";
++		reg = <0x10>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_csi0_rst> ,<&pinctrl_csi0_pwn>; 
++		clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO2>;
++		clock-names = "xclk";
++		assigned-clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO2>;
++		assigned-clock-parents = <&clk IMX8MP_CLK_24M>;
++		assigned-clock-rates = <24000000>;
++		csi_id = <0>;
++		pwn-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++		rst-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
++		mclk = <24000000>;
++		mclk_source = <0>;
++		
++		mipi_csi;
++		status = "okay";
++	/*	
++		VANA-supply = <&imx219_vana_2v8>;
++		VDIG-supply = <&imx219_vdig_1v8>;
++		VDDL-supply = <&imx219_vddl_1v2>;
++*/
++		port {
++			imx219_mipi_0_ep: endpoint {
++				remote-endpoint = <&mipi_csi0_ep>;
++				data-lanes = <1 2>;
++				clock-lanes = <0>;
++				clock-noncontinuous;
++				link-frequencies = /bits/ 64 <456000000>;
++	
++			};
++		};
++	};
++
++
++};
++
++&mipi_csi_0 { 
++    
++    port@0 {
++        mipi_csi0_ep: endpoint {
++        ///delete-property/ remote-endpoint;
++         remote-endpoint = <&imx219_mipi_0_ep>;
++        };
++    };
++
++};
++
++&cameradev {
++
++        /delete-node/ mipi_csi_1;
++};
++
++&isi_0 {
++	status = "disabled";
++
++};
++
++&isi_1 {
++	status = "disabled";
++
++};
++
++
++&isp_0 {
++	status = "okay";
++};
++
++&dewarp {
++	status = "okay";
++};
++
+--- linux-imx/arch/arm64/boot/dts/freescale/Makefile.orig	2023-07-06 16:22:49.414226942 +0800
++++ linux-imx/arch/arm64/boot/dts/freescale/Makefile	2023-07-06 16:27:28.074321841 +0800
+@@ -120,7 +120,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+ 			  imx8mp-evk-dual-ov2775.dtb imx8mp-evk-spdif-lb.dtb imx8mp-evk-dsp.dtb \
+ 			  imx8mp-evk-sof-wm8960.dtb \
+ 			  imx8mp-evk-os08a20-ov5640.dtb imx8mp-evk-os08a20.dtb \
+-			  imx8mp-evk-dual-os08a20.dtb \
++			  imx8mp-evk-dual-os08a20.dtb imx8mp-evk-imx219.dtb\
+ 			  imx8mp-evk-iqaudio-dacplus.dtb imx8mp-evk-iqaudio-dacpro.dtb imx8mp-evk-hifiberry-dacplus.dtb \
+ 			  imx8mp-evk-hifiberry-dac2.dtb imx8mp-evk-hifiberry-dacplusadc.dtb \
+ 			  imx8mp-evk-usdhc1-m2.dtb imx8mp-evk-rm67199.dtb \

@@ -1,0 +1,49 @@
+NXP Software Content Register
+
+Release Name:           IMX8MP IMX219 Sensor Enablement
+Date Created:           July-2023
+Package License:        LA_OPT_NXP_Software_License v48 July 2023 - Additional distribution license granted - Section 2.3 applies
+License File:           LICENSE.txt
+Description:            Enabled IMX219 Sensor on i.MX8MP EVK with ISP functions
+
+--------------------------------------------
+BSP Packages
+--------------------------------------------
+
+Patches for:                 linux-imx.git
+Source Location:             https://source.codeaurora.org/external/imx/linux-imx
+Patch Location:              meta-imx8mp-isp-imx219/recipes-bsp/linux-imx/linux-imx
+Outgoing License:            GPL-2.0 
+License File:                COPYING
+Package Category:            BSP
+Description and comments:    The Linux kernel with i.MX-specific drivers
+Origin:                      NXP (GPL-2.0)
+                             kernel.org (GPL-2.0) - https://www.kernel.org/
+
+--------------------------------------------
+
+Graphics Packages
+--------------------------------------------
+
+Package:                     isp-vvcam.git
+Source Location:             https://source.codeaurora.org/external/imx/isp-vvcam
+Patch Location:              meta-imx8mp-isp-imx219/recipes-isp-vvcam/vvcam/kernel-module-isp-vvcam
+Outgoing License:            GPL-2.0 
+License File:                vvcam/LICENSE
+Package Category:            Graphics
+Type of Content:             ISP Kernel Module source
+Description and comments:    Kernel Loadable Module for ISP
+Origin:                      VeriSilicon Holdings Co., Ltd. (GPL-2.0)
+
+--------------------------------------------
+
+Package:                     isp-imx-4.2.2.22.0.bin
+Source Location:             Mirror
+Patch Location:              meta-imx8mp-isp-imx/recipes-isp-imx/sdk/isp-imx
+Outgoing License:            LA_OPT_NXP_Software_License v45 May 2023 - Additional distribution license granted - Section 2.3 applies 
+License File:                COPYING
+Package Category:            Graphics
+Type of Content:             binary and source
+Description and comments:    i.MX software ISP
+Release Location:            Mirror
+Origin:                      VeriSilicon Holdings Co., Ltd. (proprietary)
