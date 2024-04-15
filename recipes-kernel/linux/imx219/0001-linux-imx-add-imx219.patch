@@ -1,0 +1,112 @@
+--- linux-imx/arch/arm64/boot/dts/freescale/Makefile.orig	2024-04-07 15:49:39.657297282 +0900
++++ linux-imx/arch/arm64/boot/dts/freescale/Makefile	2024-04-07 15:50:14.352792785 +0900
+@@ -122,7 +122,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+ 			  imx8mp-evk-dual-ov2775.dtb imx8mp-evk-spdif-lb.dtb imx8mp-evk-dsp.dtb \
+ 			  imx8mp-evk-sof-wm8960.dtb imx8mp-evk-sof-pdm.dtb \
+ 			  imx8mp-evk-os08a20-ov5640.dtb imx8mp-evk-os08a20.dtb \
+-			  imx8mp-evk-dual-os08a20.dtb \
++			  imx8mp-evk-dual-os08a20.dtb imx8mp-evk-imx219.dtb\
+ 			  imx8mp-evk-iqaudio-dacplus.dtb imx8mp-evk-iqaudio-dacpro.dtb imx8mp-evk-hifiberry-dacplus.dtb \
+ 			  imx8mp-evk-hifiberry-dac2.dtb imx8mp-evk-hifiberry-dacplusadc.dtb \
+ 			  imx8mp-evk-usdhc1-m2.dtb imx8mp-evk-rm67199.dtb \
+--- linux-imx/arch/arm64/boot/dts/freescale.orig/imx8mp-evk-imx219.dts	1970-01-01 09:00:00.000000000 +0900
++++ linux-imx/arch/arm64/boot/dts/freescale/imx8mp-evk-imx219.dts	2024-03-22 16:46:39.000000000 +0900
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2022 NXP
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++/dts-v1/;
++
++#include "imx8mp-evk.dts"
++
++&i2c2 {
++	/delete-node/ov5640_mipi@3c;
++
++	imx219_0: imx219_mipi@10 {
++		compatible = "sony,imx219";
++		reg = <0x10>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_csi0_rst> ,<&pinctrl_csi0_pwn>; 
++		clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO2>;
++		clock-names = "xclk";
++		assigned-clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO2>;
++		assigned-clock-parents = <&clk IMX8MP_CLK_24M>;
++		assigned-clock-rates = <24000000>;
++		csi_id = <0>;
++		pwn-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++		rst-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
++		mclk = <24000000>;
++		mclk_source = <0>;
++
++		mipi_csi;
++		status = "okay";
++
++		port {
++			imx219_mipi_0_ep: endpoint {
++				remote-endpoint = <&mipi_csi0_ep>;
++				data-lanes = <1 2>;
++				clock-lanes = <0>;
++				clock-noncontinuous;
++				max-pixel-frequency = /bits/ 64 <456000000>;
++			};
++		};
++
++	};
++};
++
++&i2c3 {
++	/delete-node/ov5640_mipi@3c;
++
++};
++
++&cameradev {
++	status = "okay";
++};
++
++&isi_0 {
++	cap_device {
++		status = "disabled";
++	};
++};
++
++&isi_1 {
++	status = "disabled";
++};
++
++&isp_0 {
++	status = "okay";
++};
++
++&dewarp {
++	status = "okay";
++};
++
++&mipi_csi_0 {
++	status = "okay";
++
++	port {
++		endpoint {
++			remote-endpoint = <&imx219_mipi_0_ep>;
++			data-lanes = <2>;
++			csis-hs-settle = <16>;
++		};
++	};
++};
++
++&mipi_csi_1 {
++	/delete-property/ #address-cells;
++	/delete-property/ #size-cells;
++	/delete-node/port@1;
++};

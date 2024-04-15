@@ -1,8 +1,8 @@
 NXP Software Content Register
 
 Release Name:           IMX8MP IMX219 Sensor Enablement
-Date Created:           July-2023
-Package License:        LA_OPT_NXP_Software_License v48 July 2023 - Additional distribution license granted - Section 2.3 applies
+Date Created:           APr-2024
+Package License:        LA_OPT_NXP_Software_License v56 Apr 2024 - Additional distribution license granted - Section 2.3 applies
 License File:           LICENSE.txt
 Description:            Enabled IMX219 Sensor on i.MX8MP EVK with ISP functions
 
@@ -37,13 +37,25 @@ Origin:                      VeriSilicon Holdings Co., Ltd. (GPL-2.0)
 
 --------------------------------------------
 
-Package:                     isp-imx-4.2.2.22.0.bin
+Package:                     verisilicon_sw_isp-*.bin
 Source Location:             Mirror
 Patch Location:              meta-imx8mp-isp-imx/recipes-isp-imx/sdk/isp-imx
-Outgoing License:            LA_OPT_NXP_Software_License v45 May 2023 - Additional distribution license granted - Section 2.3 applies 
+Outgoing License:            LA_OPT_NXP_Software_License - Additional distribution license granted - Section 2.3 applies 
 License File:                COPYING
 Package Category:            Graphics
 Type of Content:             binary and source
 Description and comments:    i.MX software ISP
 Release Location:            Mirror
-Origin:                      VeriSilicon Holdings Co., Ltd. (proprietary)
+Origin:                      NXP (proprietary)
+			     VeriSilicon Holdings Co., Ltd. (proprietary)
+			     Boost C++ Libraries (Boost Software License 1.0) - https://sourceforge.net/projects/boost/
+			     cpp-netlib (Boost Software License 1.0) - https://github.com/cpp-netlib/cpp-netlib.github.com/
+			     TinyXML2 by Lee Thomason (ZLib) - https://github.com/leethomason/tinyxml2/
+			     Android Open Source Project (Apache-2.0) - https://developer.android.com/index.html
+			     JsonCpp library (public domain) - https://github.com/open-source-parsers/jsoncpp/
+			     BZip2 Compression Library (BSD-4-clause) - https://www.nuget.org/packages/bzip2
+			     Novell, Inc. - linked-list sorting (MIT)
+			     Northwest Logic - PCI Express (MIT) - https://www.ProCodeWorks.com
+			     base64 encoding and decoding with C++ by Rene Nyffenegger (ZLib)
+			     QT (BSD-3-clause) - https://www.qt.io/developers
+			     zlib (zlib) - https://tracker.debian.org/pkg/zlib
