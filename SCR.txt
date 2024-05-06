@@ -1,7 +1,7 @@
 NXP Software Content Register
 
 Release Name:           IMX8MP IMX219 Sensor Enablement
-Date Created:           APr-2024
+Date Created:           Apr-2024
 Package License:        LA_OPT_NXP_Software_License v56 Apr 2024 - Additional distribution license granted - Section 2.3 applies
 License File:           LICENSE.txt
 Description:            Enabled IMX219 Sensor on i.MX8MP EVK with ISP functions
@@ -11,7 +11,7 @@ BSP Packages
 --------------------------------------------
 
 Patches for:                 linux-imx.git
-Source Location:             https://source.codeaurora.org/external/imx/linux-imx
+Source Location:             https://github.com/nxp-imx/linux-imx
 Patch Location:              meta-imx8mp-isp-imx219/recipes-bsp/linux-imx/linux-imx
 Outgoing License:            GPL-2.0 
 License File:                COPYING
@@ -26,7 +26,7 @@ Graphics Packages
 --------------------------------------------
 
 Package:                     isp-vvcam.git
-Source Location:             https://source.codeaurora.org/external/imx/isp-vvcam
+Source Location:             https://github.com/nxp-imx/isp-vvcam
 Patch Location:              meta-imx8mp-isp-imx219/recipes-isp-vvcam/vvcam/kernel-module-isp-vvcam
 Outgoing License:            GPL-2.0 
 License File:                vvcam/LICENSE
