@@ -36,16 +36,6 @@
 +	]
 +
 +}
---- isp-imx-4.2.2.20.0/units/isi/CMakeLists.txt.back	2023-02-14 10:47:14.062086752 +0800
-+++ isp-imx-4.2.2.20.0/units/isi/CMakeLists.txt	2023-02-14 10:46:08.433575585 +0800
-@@ -85,6 +85,7 @@ include(${UNITS_TOP_DIRECTORY}/targets.c
- add_subdirectory( drv/OV2775 )
- add_subdirectory( drv/OS08a20 )
- add_subdirectory( drv/AR1335 )
-+add_subdirectory( drv/IMX219 )
- #add_subdirectory( drv/OV5630 )
- ###add_subdirectory( drv/OV8810 )
- #add_subdirectory( drv/OV14825 )
 --- isp-imx-4.2.2.20.0/units/isi/drv/IMX219.orig/Sensor0_Entry_imx219.cfg	1970-01-01 08:00:00.000000000 +0800
 +++ isp-imx-4.2.2.20.0/units/isi/drv/IMX219/Sensor0_Entry_imx219.cfg	2022-04-30 01:46:56.000000000 +0800
 @@ -0,0 +1,11 @@
@@ -860,21 +850,142 @@
 +    </tuning>
 +</matfile>
 +
---- isp-imx-4.2.2.20.0/units/isi/drv/IMX219.orig/source/IMX219.c	1970-01-01 08:00:00.000000000 +0800
-+++ isp-imx-4.2.2.20.0/units/isi/drv/IMX219/source/IMX219.c	2023-02-14 10:45:17.465178635 +0800
-@@ -0,0 +1,1322 @@
-+/******************************************************************************\
-+|* Copyright (c) 2020 by VeriSilicon Holdings Co., Ltd. ("VeriSilicon")       *|
-+|* All Rights Reserved.                                                       *|
-+|*                                                                            *|
-+|* The material in this file is confidential and contains trade secrets of    *|
-+|* of VeriSilicon.  This is proprietary information owned or licensed by      *|
-+|* VeriSilicon.  No part of this work may be disclosed, reproduced, copied,   *|
-+|* transmitted, or used in any way for any purpose, without the express       *|
-+|* written permission of VeriSilicon.                                         *|
-+|*                                                                            *|
-+\******************************************************************************/
-+//#undef NDEBUG
+--- isp-imx-4.2.2.20.0/units/isi/drv/IMX219.orig/CMakeLists.txt	1970-01-01 08:00:00.000000000 +0800
++++ isp-imx-4.2.2.20.0/units/isi/drv/IMX219/CMakeLists.txt	2023-02-14 10:45:17.469178666 +0800
+@@ -0,0 +1,105 @@
++cmake_minimum_required(VERSION 2.6)
++
++# define module name & interface version
++set (module imx219)
++
++# define interface version
++set (${module}_INTERFACE_CURRENT  1)
++set (${module}_INTERFACE_REVISION 0)
++set (${module}_INTERFACE_AGE      0)
++
++# we want to compile all .c files as default
++file(GLOB libsources source/IMX219.c )
++
++# set public headers, these get installed
++file(GLOB pub_headers include/*.h)
++
++# define include paths
++include_directories(
++    include
++    include_priv
++    ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/include
++    )
++
++# module specific defines
++###add_definitions(-Wno-error=unused-function)
++
++# add lib to build env
++#add_library(${module}_static STATIC ${libsources})
++add_library(${module}_shared SHARED ${libsources})
++
++#SET_TARGET_PROPERTIES(${module}_static PROPERTIES OUTPUT_NAME     ${module})
++#SET_TARGET_PROPERTIES(${module}_static PROPERTIES LINK_FLAGS      -static)
++#SET_TARGET_PROPERTIES(${module}_static PROPERTIES FRAMEWORK       TRUE PUBLIC_HEADER "${pub_headers}")
++
++SET_TARGET_PROPERTIES(${module}_shared PROPERTIES OUTPUT_NAME     ${module})
++SET_TARGET_PROPERTIES(${module}_shared PROPERTIES LINK_FLAGS      -shared)
++SET_TARGET_PROPERTIES(${module}_shared PROPERTIES SOVERSION       ${${module}_INTERFACE_CURRENT})
++SET_TARGET_PROPERTIES(${module}_shared PROPERTIES VERSION         ${${module}_INTERFACE_CURRENT}.${${module}_INTERFACE_REVISION}.${${module}_INTERFACE_AGE})
++SET_TARGET_PROPERTIES(${module}_shared PROPERTIES FRAMEWORK       TRUE PUBLIC_HEADER "${pub_headers}")
++
++# add convenience target: put sensor driver into the 'bin' output dir as well
++if ( NOT ANDROID )
++add_custom_target(${module}.drv
++                  ALL
++                  COMMAND ${CMAKE_COMMAND} -E copy ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so.${${module}_INTERFACE_CURRENT} ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/bin/${module}.drv
++                  DEPENDS ${module}_shared
++                  COMMENT "Copying ${module} driver module"
++                  )
++endif()
++
++if(${APPMODE} STREQUAL NATIVE)
++add_custom_target(${module}.init
++                  ALL
++		  DEPENDS ${module}_shared
++                  COMMENT "Copying ${module} init files"
++                  )
++endif (${APPMODE} STREQUAL NATIVE)
++
++# define lib dependencies
++#target_link_libraries(${module}_static
++#                      ${platform_libs}
++#                      ${base_libs}
++#                      ${drv_libs}
++#                      isi_shared
++#                      )
++
++#target_link_libraries(${module}_shared
++#                      ${platform_libs}
++#                      ${base_libs}
++#                      ${drv_libs}
++#                      isi_shared
++#                      )
++
++# define stuff to install
++#install(TARGETS ${module}_static
++#        PUBLIC_HEADER   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${module}
++#        ARCHIVE         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
++#        )
++
++install(TARGETS ${module}_shared
++        PUBLIC_HEADER   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${module}
++        ARCHIVE         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${module}
++        LIBRARY         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${module}
++        )
++
++# install the sensor driver as well, but to 'bin' location!
++install(FILES       ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so.${${module}_INTERFACE_CURRENT}
++        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
++        RENAME      ${module}.drv
++        )
++
++if( DEFINED APPSHELL_TOP_COMPILE)
++add_custom_target(copy_shell_libs_${module} ALL
++       COMMENT "##Copy libs to shell libs"
++       COMMAND ${CMAKE_COMMAND} -E copy ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so ${CMAKE_HOME_DIRECTORY}/shell_libs/${APPMODE}/ispcore/${PLATFORM}/lib${module}.so
++       #COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/include/${module} ${CMAKE_HOME_DIRECTORY}/shell_libs/include/units_headers/${module}
++)
++add_dependencies(copy_shell_libs_${module} ${module}_shared)
++endif( DEFINED APPSHELL_TOP_COMPILE)
++
++# create common targets for this module
++include(${UNITS_TOP_DIRECTORY}/targets.cmake)
++
++# create calib data targets
++add_subdirectory(calib)
+--- isp-imx-4.2.2.20.0/units/isi/drv/IMX219.orig/source/IMX219.c	1970-01-01 09:00:00.000000000 +0900
++++ isp-imx-4.2.2.20.0/units/isi/drv/IMX219/source/IMX219.c	2024-05-06 12:29:03.000000000 +0900
+@@ -0,0 +1,1335 @@
++/****************************************************************************
++ *
++ * The MIT License (MIT)
++ *
++ * Copyright (c) 2020 VeriSilicon Holdings Co., Ltd.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ *
++ *****************************************************************************/
 +
 +#include <ebase/types.h>
 +#include <ebase/trace.h>
@@ -2185,111 +2296,11 @@
 +    .pIsiHalQuerySensor = IMX219_IsiHalQuerySensorIss,
 +    .pfIsiGetSensorIss = IMX219_IsiGetSensorIss,
 +};
---- isp-imx-4.2.2.20.0/units/isi/drv/IMX219.orig/CMakeLists.txt	1970-01-01 08:00:00.000000000 +0800
-+++ isp-imx-4.2.2.20.0/units/isi/drv/IMX219/CMakeLists.txt	2023-02-14 10:45:17.469178666 +0800
-@@ -0,0 +1,105 @@
-+cmake_minimum_required(VERSION 2.6)
-+
-+# define module name & interface version
-+set (module imx219)
-+
-+# define interface version
-+set (${module}_INTERFACE_CURRENT  1)
-+set (${module}_INTERFACE_REVISION 0)
-+set (${module}_INTERFACE_AGE      0)
-+
-+# we want to compile all .c files as default
-+file(GLOB libsources source/IMX219.c )
-+
-+# set public headers, these get installed
-+file(GLOB pub_headers include/*.h)
-+
-+# define include paths
-+include_directories(
-+    include
-+    include_priv
-+    ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/include
-+    )
-+
-+# module specific defines
-+###add_definitions(-Wno-error=unused-function)
-+
-+# add lib to build env
-+#add_library(${module}_static STATIC ${libsources})
-+add_library(${module}_shared SHARED ${libsources})
-+
-+#SET_TARGET_PROPERTIES(${module}_static PROPERTIES OUTPUT_NAME     ${module})
-+#SET_TARGET_PROPERTIES(${module}_static PROPERTIES LINK_FLAGS      -static)
-+#SET_TARGET_PROPERTIES(${module}_static PROPERTIES FRAMEWORK       TRUE PUBLIC_HEADER "${pub_headers}")
-+
-+SET_TARGET_PROPERTIES(${module}_shared PROPERTIES OUTPUT_NAME     ${module})
-+SET_TARGET_PROPERTIES(${module}_shared PROPERTIES LINK_FLAGS      -shared)
-+SET_TARGET_PROPERTIES(${module}_shared PROPERTIES SOVERSION       ${${module}_INTERFACE_CURRENT})
-+SET_TARGET_PROPERTIES(${module}_shared PROPERTIES VERSION         ${${module}_INTERFACE_CURRENT}.${${module}_INTERFACE_REVISION}.${${module}_INTERFACE_AGE})
-+SET_TARGET_PROPERTIES(${module}_shared PROPERTIES FRAMEWORK       TRUE PUBLIC_HEADER "${pub_headers}")
-+
-+# add convenience target: put sensor driver into the 'bin' output dir as well
-+if ( NOT ANDROID )
-+add_custom_target(${module}.drv
-+                  ALL
-+                  COMMAND ${CMAKE_COMMAND} -E copy ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so.${${module}_INTERFACE_CURRENT} ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/bin/${module}.drv
-+                  DEPENDS ${module}_shared
-+                  COMMENT "Copying ${module} driver module"
-+                  )
-+endif()
-+
-+if(${APPMODE} STREQUAL NATIVE)
-+add_custom_target(${module}.init
-+                  ALL
-+		  DEPENDS ${module}_shared
-+                  COMMENT "Copying ${module} init files"
-+                  )
-+endif (${APPMODE} STREQUAL NATIVE)
-+
-+# define lib dependencies
-+#target_link_libraries(${module}_static
-+#                      ${platform_libs}
-+#                      ${base_libs}
-+#                      ${drv_libs}
-+#                      isi_shared
-+#                      )
-+
-+#target_link_libraries(${module}_shared
-+#                      ${platform_libs}
-+#                      ${base_libs}
-+#                      ${drv_libs}
-+#                      isi_shared
-+#                      )
-+
-+# define stuff to install
-+#install(TARGETS ${module}_static
-+#        PUBLIC_HEADER   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${module}
-+#        ARCHIVE         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-+#        )
-+
-+install(TARGETS ${module}_shared
-+        PUBLIC_HEADER   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${module}
-+        ARCHIVE         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${module}
-+        LIBRARY         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${module}
-+        )
-+
-+# install the sensor driver as well, but to 'bin' location!
-+install(FILES       ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so.${${module}_INTERFACE_CURRENT}
-+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-+        RENAME      ${module}.drv
-+        )
-+
-+if( DEFINED APPSHELL_TOP_COMPILE)
-+add_custom_target(copy_shell_libs_${module} ALL
-+       COMMENT "##Copy libs to shell libs"
-+       COMMAND ${CMAKE_COMMAND} -E copy ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/lib/lib${module}.so ${CMAKE_HOME_DIRECTORY}/shell_libs/${APPMODE}/ispcore/${PLATFORM}/lib${module}.so
-+       #COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIB_ROOT}/${CMAKE_BUILD_TYPE}/include/${module} ${CMAKE_HOME_DIRECTORY}/shell_libs/include/units_headers/${module}
-+)
-+add_dependencies(copy_shell_libs_${module} ${module}_shared)
-+endif( DEFINED APPSHELL_TOP_COMPILE)
-+
-+# create common targets for this module
-+include(${UNITS_TOP_DIRECTORY}/targets.cmake)
-+
-+# create calib data targets
-+add_subdirectory(calib)
+--- isp-imx-4.2.2.20.0/units/isi/CMakeLists.txt.bak	2024-05-06 17:00:32.235758801 +0900
++++ isp-imx-4.2.2.20.0/units/isi/CMakeLists.txt	2024-05-06 17:00:54.643700030 +0900
+@@ -78,4 +78,4 @@ include(${UNITS_TOP_DIRECTORY}/targets.c
+ 
+ # add sensor driver modules here
+ add_subdirectory( drv/OS08a20 )
+-
++add_subdirectory( drv/IMX219 )
