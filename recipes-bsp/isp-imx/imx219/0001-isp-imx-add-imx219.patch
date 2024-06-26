@@ -24,7 +24,7 @@
 +				"vertical_line_down": 960
 +			},
 +
-+			"bypass" : false,
++			"bypass" : true,
 +			"hflip"  : false,
 +			"vflip"  : false,
 +
